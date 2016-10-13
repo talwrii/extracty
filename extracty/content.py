@@ -91,7 +91,6 @@ def remove_bad_by_attrs(doc):
 
 def clean(doc, strip_elements=True, strip_attrs=True):
     """ Clean ``doc`` DOM"""
-    to_delete = []
     for el in doc.iter():
 
         # stript unwanted attrs
@@ -156,7 +155,7 @@ _bad_attr_re = gen_matches_any(
     'comment',
     'taxonom',
     'discuss',
-    'e[\-]?mail',
+    r'e[\-]?mail',
     'share',
     'reply',
     'login',
@@ -168,7 +167,7 @@ _bad_attr_re = gen_matches_any(
     'subscri',
     'buy',
     'header',
-    '(^|\-|_)date($|\-|_)',
+    r'(^|\-|_)date($|\-|_)',
     )
 
 _good_attr_re = gen_matches_any(

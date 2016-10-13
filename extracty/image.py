@@ -97,8 +97,7 @@ def image_size(url):
     return img.size
 
 _image_urls_banned = utils.gen_matches_any(
-    'avatar', '\.gif', '\.ico', 'logo', 'ads')
+    'avatar', r'\.gif', r'\.ico', 'logo', 'ads')
 
 _image_opengraph_banned = utils.gen_matches_any(
     'opengraph', 'og', 'user', 'logo')
-

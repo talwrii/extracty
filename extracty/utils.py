@@ -28,7 +28,7 @@ def html_to_text(doc):
 
     txt = doc.xpath('.//text()')
     txt = ' '.join(txt)
-    return re.sub('\s+', ' ', txt).strip()
+    return re.sub(r'\s+', ' ', txt).strip()
 
 def precedings(element, before=None, skip=None):
     """ Traverse tree from element in preceding order

@@ -8,16 +8,14 @@
 
 """
 
-import re
 import urlparse
-import justext
 import lxml.html
 
 from .author import extract_author
 from .image import extract_cover_image
 from .title import extract_title
 from .content import extract_content
-from .utils import gen_matches_any, html_to_text, precedings, fetch_url
+from .utils import html_to_text, fetch_url
 
 __all__ = (
     'extract', 'extract_author', 'extract_cover_image', 'extract_title',
