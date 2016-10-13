@@ -11,6 +11,7 @@
 import argparse
 import re
 import urlparse
+import json
 import justext
 import lxml.html
 
@@ -77,6 +78,8 @@ def main():
     PARSER.add_argument(
         '--include', '-i',
         choices=FIELDS, dest='include', action='append', help='Show this field')
+    PARSER.add_argument(
+        '--json', action='store_true', help='Output data as json. Commands (such as jq) can be used for formatting')
     args = PARSER.parse_args()
 
     import urllib2
@@ -109,6 +112,9 @@ def main():
 
     assert not illegal_fields, illegal_fields
 
-    for k, v in metadata.items():
-        v = v or ''
-        print '%s\t%s' % (k, v.encode('utf8'))
+    if args.json:
+        print json.dumps(metadata)
+    else:
+        for k, v in metadata.items():
+            v = v or ''
+            print '%s\t%s' % (k, v.encode('utf8'))
