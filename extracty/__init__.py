@@ -22,12 +22,13 @@ from .image import extract_cover_image
 from .title import extract_title
 from .content import extract_content
 from .utils import gen_matches_any, html_to_text, precedings, fetch_url
+from .rss import extract_rss
 
 __all__ = (
     'extract', 'extract_author', 'extract_cover_image', 'extract_title',
-    'html_to_text')
+    'html_to_text', 'extract_rss')
 
-def extract(doc, src, author=True, cover_image=True, title=True, content=True, url=True):
+def extract(doc, src, author=True, cover_image=True, title=True, content=True, url=True, rss=True):
     """ Extract metadata from HTML document"""
     if isinstance(doc, basestring):
         doc = lxml.html.fromstring(doc)
@@ -49,13 +50,16 @@ def extract(doc, src, author=True, cover_image=True, title=True, content=True, u
             extracted = urlparse.urljoin(src, extracted)
         metadata['cover_image'] = extracted
 
+    if rss:
+        metadata['rss'] = extract_rss(doc, src)
+
     # this should go last, because it mutates tree
     if content:
         metadata['content'] = extract_content(doc, src)
 
     return metadata
 
-FIELDS = TITLE, AUTHOR, COVER_IMAGE, URL, CONTENT = 'title', 'author', 'cover_image', 'url', 'content'
+FIELDS = TITLE, AUTHOR, COVER_IMAGE, URL, CONTENT, RSS = 'title', 'author', 'cover_image', 'url', 'content', 'rss'
 
 def main():
     PARSER = argparse.ArgumentParser(description='Extract meta data from HTML pages')
@@ -93,7 +97,6 @@ def main():
         with open(args.src) as stream:
             data = stream.read()
 
-
     included_fields = args.include or FIELDS
     excluded_fields = args.exclude or []
 
@@ -106,7 +109,7 @@ def main():
     metadata = extract(
         data, src=src_url,
         author=author, title=title, cover_image=cover_image,
-        content=content, url=url)
+        content=content, url=url, rss=rss)
 
     illegal_fields = set(metadata) - set(FIELDS)
 
@@ -117,4 +120,15 @@ def main():
     else:
         for k, v in metadata.items():
             v = v or ''
-            print '%s\t%s' % (k, v.encode('utf8'))
+            print '%s' % (k,),
+            if isinstance(v, list):
+                if len(v) == 1:
+                    print v.encode('utf8')
+
+                else:
+                    print
+                    for item in v:
+                        print '\t' + item.encode('utf8')
+
+            else:
+                print '\t%s' % (v.encode('utf8'),)
